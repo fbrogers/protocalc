@@ -19,14 +19,14 @@
         $(function(){
             var json = data;
             var jsonHtml = "";
-            $.each(json.categories, function(key, category){
+            $.each(json.categories, function(ckey, category){
                 jsonHtml += '<div class="card mb-3">';
                 jsonHtml += '<div class="card-header"><b>'+ category.name + "</b> ";
                 jsonHtml += '<span class="badge badge-success">' + category.weight + '</span>';
                 jsonHtml += '</div>';
                 jsonHtml += '<div class="card-body">';
 
-                $.each(category.questions, function(key, question){
+                $.each(category.questions, function(qkey, question){
                     var questionWeight = Math.round(category.weight * (question.weight / 100));
 
                     jsonHtml += '<div class="form-group">';
@@ -34,13 +34,13 @@
                     jsonHtml += '<span class="qweight badge badge-warning">' + questionWeight + '</span> ';
                     jsonHtml += '<span class="qscore badge badge-success"></span>';
                     jsonHtml += '</label>';
-                    jsonHtml += '<select class="form-control" size="' + question.answers.length + '">';
 
-                    $.each(question.answers, function(key, answer){
-                        jsonHtml += '<option value="' + key + '">' + answer.text + '</option>';
+                    $.each(question.answers, function(akey, answer){
+                        jsonHtml += '<div class="radio"><label>';
+                        jsonHtml += '<input type="radio" name="q'+ckey+qkey+'" value="' + akey + '"> ' + answer.text + ' ';
+                        jsonHtml += '</label></div>';
                     });
 
-                    jsonHtml += '</select>';
                     jsonHtml += '</div>';
                 });
 
@@ -72,11 +72,12 @@
                 reset();
             });
 
-            $("#calcform select").on("change", function(){
-                var questionScoreContainer = $(this).parent().find("span.qscore:first");
-                var questionScoreWeight = $(this).parent().find("span.qweight:first").html();
+            $("#calcform input").on("change", function(){
+                var inputParent = $(this).parent().parent().parent();
+                var questionScoreContainer = inputParent.find("span.qscore:first");
+                var questionScoreWeight = inputParent.find("span.qweight:first").html();
                 var questionScore = $(this).val();
-                var questionScale = $(this).children().length - 1;
+                var questionScale = inputParent.children().children("label").length - 1;
                 var questionScoreCalc = Math.round(questionScoreWeight * (questionScore / questionScale));
                 questionScoreContainer.html(questionScoreCalc);
 
