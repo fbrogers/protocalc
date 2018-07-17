@@ -5,299 +5,100 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Business Value Calculator</title>
+
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" crossorigin="anonymous">
     <link rel="stylesheet" href="https://assets.sdes.ucf.edu/cdn/minerva/v1.0.0-beta/css/minerva.css" />
-    <style type="text/css">
-        body { margin: 0; }
-        .affix { position: fixed; }
-        @media ( max-width: 768px) { .affix { position: relative; } }
-    </style>
+    <link rel="stylesheet" href="assets/style.css" />
 
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" crossorigin="anonymous"></script>
-    <script type="text/javascript">
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="assets/data.js"></script>
+    <script>
         $(function(){
-            $("option:selected").prop("selected", false);
+            var json = data;
+            var jsonHtml = "";
+            $.each(json.categories, function(key, category){
+                jsonHtml += '<div class="card mb-3">';
+                jsonHtml += '<div class="card-header"><b>'+ category.name + "</b> ";
+                jsonHtml += '<span class="badge badge-success">' + category.weight + '</span>';
+                jsonHtml += '</div>';
+                jsonHtml += '<div class="card-body">';
 
-            const categoryClientValue = 40;
-            const categoryPerception  = 15;
-            const categoryRisk        = 25;
-            const categoryConsolidate = 20;
+                $.each(category.questions, function(key, question){
+                    var questionWeight = Math.round(category.weight * (question.weight / 100));
 
-            const impactq1 = 0.5;
-            const impactq2 = 0.25;
-            const impactq3 = 0.25;
+                    jsonHtml += '<div class="form-group">';
+                    jsonHtml += '<label>' + question.text + ' ';
+                    jsonHtml += '<span class="qweight badge badge-warning">' + questionWeight + '</span> ';
+                    jsonHtml += '<span class="qscore badge badge-success"></span>';
+                    jsonHtml += '</label>';
+                    jsonHtml += '<select class="form-control" size="' + question.answers.length + '">';
 
-            const perceptionq1 = 0.33;
-            const perceptionq2 = 0.33;
-            const perceptionq3 = 0.33;
+                    $.each(question.answers, function(key, answer){
+                        jsonHtml += '<option value="' + key + '">' + answer.text + '</option>';
+                    });
 
-            const riskq1 = 0.6;
-            const riskq2 = 0.4;
+                    jsonHtml += '</select>';
+                    jsonHtml += '</div>';
+                });
 
-            const consolidateq1 = 1;
-
-            calcScore();
-
-            $("#categoryClientValue").html("<b>"+categoryClientValue+"</b>");
-            $("#badge-impact-q1").html("<b>"+Math.round(impactq1 * categoryClientValue)+"</b>");
-            $("#badge-impact-q2").html("<b>"+Math.round(impactq2 * categoryClientValue)+"</b>");
-            $("#badge-impact-q3").html("<b>"+Math.round(impactq3 * categoryClientValue)+"</b>");
-
-            $("#categoryPerception").html("<b>"+categoryPerception+"</b>");
-            $("#badge-perception-q1").html("<b>"+Math.round(perceptionq1 * categoryPerception)+"</b>");
-            $("#badge-perception-q2").html("<b>"+Math.round(perceptionq2 * categoryPerception)+"</b>");
-            $("#badge-perception-q3").html("<b>"+Math.round(perceptionq3 * categoryPerception)+"</b>");
-
-            $("#categoryRisk").html("<b>"+categoryRisk+"</b>");
-            $("#badge-risk-q1").html("<b>"+Math.round(riskq1 * categoryRisk)+"</b>");
-            $("#badge-risk-q2").html("<b>"+Math.round(riskq2 * categoryRisk)+"</b>");
-
-            $("#categoryConsolidate").html("<b>"+categoryConsolidate+"</b>");
-            $("#badge-consolidate-q1").html("<b>"+Math.round(consolidateq1 * categoryConsolidate)+"</b>");
-
-            $("#bvform select").on("change", function(){
-                calcScore();
+                jsonHtml += '</div>';
+                jsonHtml += '</div>';
             });
+            $("#calcform").html(jsonHtml);
 
             function calcScore(){
                 var score = 0;
-
-                //client value category
-                var impactq1Value = $("#impact-q1").val();
-                var impactq1Options = $("#impact-q1 option").length - 1;
-                score += Math.round((Math.round(impactq1 * categoryClientValue) / impactq1Options) * impactq1Value);
-
-                var impactq2Value = $("#impact-q2").val();
-                var impactq2Options = $("#impact-q2 option").length - 1;
-                score += Math.round((Math.round(impactq2 * categoryClientValue) / impactq2Options) * impactq2Value);
-
-                var impactq3Value = $("#impact-q3").val();
-                var impactq3Options = $("#impact-q3 option").length - 1;
-                score += Math.round((Math.round(impactq3 * categoryClientValue) / impactq3Options) * impactq3Value);
-
-                //perception category
-                var perceptionq1Value = $("#perception-q1").val();
-                var perceptionq1Options = $("#perception-q1 option").length - 1;
-                score += Math.round((Math.round(perceptionq1 * categoryPerception) / perceptionq1Options) * perceptionq1Value);
-
-                var perceptionq2Value = $("#perception-q2").val();
-                var perceptionq2Options = $("#perception-q2 option").length - 1;
-                score += Math.round((Math.round(perceptionq2 * categoryPerception) / perceptionq2Options) * perceptionq2Value);
-
-                var perceptionq3Value = $("#perception-q3").val();
-                var perceptionq3Options = $("#perception-q3 option").length - 1;
-                score += Math.round((Math.round(perceptionq3 * categoryPerception) / perceptionq3Options) * perceptionq3Value);
-
-                //risk category
-                var riskq1Value = $("#risk-q1").val();
-                var riskq1Options = $("#risk-q1 option").length - 1;
-                score += Math.round((Math.round(riskq1 * categoryRisk) / riskq1Options) * riskq1Value);
-
-                var riskq2Value = $("#risk-q2").val();
-                var riskq2Options = $("#risk-q2 option").length - 1;
-                score += Math.round((Math.round(riskq2 * categoryRisk) / riskq2Options) * riskq2Value);
-
-                //consolidation category
-                var consolidateq1Value = $("#consolidate-q1").val();
-                var consolidateq1Options = $("#consolidate-q1 option").length - 1;
-                score += Math.round((Math.round(consolidateq1 * categoryConsolidate) / consolidateq1Options) * consolidateq1Value);
-
+                $(".qscore").each(function(){
+                    score += Math.round($(this).text());
+                });
                 scoreRounded = Math.round(score * 0.2)
 
-                $("#score").html("<span>"+score+"</span>");
-                $("#scoreRounded").html("<span>"+scoreRounded+"</span>");
+                $("#score").html(score + " / 100");
+                $("#scoreRounded").html(scoreRounded + " / 20");
             }
+
+            function reset(){
+                $("option:selected").prop("selected", false);
+                $(".qscore").html("0");
+                calcScore();
+            }
+            reset();
+
+            $('.btn-reset').on("click", function(){
+                reset();
+            });
+
+            $("#calcform select").on("change", function(){
+                var questionScoreContainer = $(this).parent().find("span.qscore:first");
+                var questionScoreWeight = $(this).parent().find("span.qweight:first").html();
+                var questionScore = $(this).val();
+                var questionScale = $(this).children().length - 1;
+                var questionScoreCalc = Math.round(questionScoreWeight * (questionScore / questionScale));
+                questionScoreContainer.html(questionScoreCalc);
+
+                calcScore();
+            });
         })
     </script>
 </head>
 <body>
     <a href="#content" class="sr-only sr-only-focusable">Skip to Main Content</a>
     <header>
-        <nav class="navbar navbar-dark navbar-expand-lg slim-nav slim-nav-dark">
+        <nav class="navbar navbar-dark navbar-expand-lg fixed-top slim-nav slim-nav-dark">
             <div class="container">
-                <a class="navbar-brand" href="#">Business Value Calculator</a>
+                <a class="navbar-brand" href="#">Protocalc</a>
+                <span class="navbar-text h2">
+                    <button class="btn btn-primary" id="score"></button>
+                    <button class="btn btn-success" id="scoreRounded"></button>
+                    <button class="btn btn-warning btn-reset">Reset</button>
+                </span>
             </div>
         </nav>
     </header>
-
-    <!-- content area -->
     <div class="container site-content my-5">
-        <div class="row">
-            <div class="col-md-9">
-                <form id="bvform">
-                    <div class="card mb-3">
-                        <div class="card-header">
-                            Client Value and Impact
-                            <span class="badge badge-success" id="categoryClientValue"></span>
-                        </div>
-                        <div class="card-body">
-                            <div class="form-group">
-                                <label for="impact-q1">
-                                    How much additional functionality is being created for what kinds of clients?
-                                    <span class="badge badge-warning" id="badge-impact-q1"></span>
-                                </label>
-                                <select size="5" class="form-control" id="impact-q1">
-                                    <option value="0">No new functionality</option>
-                                    <option value="1">Some new functionality for a similar set of users</option>
-                                    <option value="2">Some new functionality for a larger set of users</option>
-                                    <option value="3">A significant amount of new functionality for a similar set of users</option>
-                                    <option value="4">A significant amount of new functionality for a larger set of users</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="impact-q2">
-                                    How many students will this impact directly?
-                                    <span class="badge badge-warning" id="badge-impact-q2"></span>
-                                </label>
-                                <select size="5" class="form-control" id="impact-q2">
-                                    <option value="0">0-100</option>
-                                    <option value="1">100-500</option>
-                                    <option value="2">500-1000</option>
-                                    <option value="3">1000-10000</option>
-                                    <option value="4">10000+</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="impact-q3">
-                                    How many faculty and/or staff members will this impact directly?
-                                    <span class="badge badge-warning" id="badge-impact-q3"></span>
-                                </label>
-                                <select size="5" class="form-control" id="impact-q3">
-                                    <option value="0">Individual</option>
-                                    <option value="1">Group</option>
-                                    <option value="2">Department</option>
-                                    <option value="3">Unit / College</option>
-                                    <option value="4">Univeristy</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card mb-3">
-                        <div class="card-header">
-                            Perception of Value 
-                            <span class="badge badge-success" id="categoryPerception"></span>
-                        </div>
-                        <div class="card-body">
-                            <div class="form-group">
-                                <label for="perception-q1">
-                                    How valuable does the Scrum team find this work?
-                                    <span class="badge badge-warning" id="badge-perception-q1"></span>
-                                </label>
-                                <select size="3" class="form-control" id="perception-q1">
-                                    <option value="0">Low</option>
-                                    <option value="1">Medium</option>
-                                    <option value="2">High</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="perception-q2">
-                                    How valuable does the staff client find this work?
-                                    <span class="badge badge-warning" id="badge-perception-q2"></span>
-                                </label>
-                                <select size="3" class="form-control" id="perception-q2">
-                                    <option value="0">Low</option>
-                                    <option value="1">Medium</option>
-                                    <option value="2">High</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="perception-q3">
-                                    How valuable will the affected students find this work?
-                                    <span class="badge badge-warning" id="badge-perception-q3"></span>
-                                </label>
-                                <select size="3" class="form-control" id="perception-q3">
-                                    <option value="0">Low</option>
-                                    <option value="1">Medium</option>
-                                    <option value="2">High</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card mb-3">
-                        <div class="card-header">
-                            Risk Mitigation 
-                            <span class="badge badge-success" id="categoryRisk"></span>
-                        </div>
-                        <div class="card-body">
-                            <div class="form-group">
-                                <label for="risk-q1">
-                                    Will the result of this item replace a deprecated approach or technology with a supported one,
-                                    according to the team's current baselines?
-                                    <span class="badge badge-warning" id="badge-risk-q1"></span>
-                                </label>
-                                <select size="2" class="form-control" id="risk-q1">
-                                    <option value="0">No</option>
-                                    <option value="1">Yes</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="risk-q2">
-                                     Is this item proactively (i.e., not mandated) dealing with a situation that would almost
-                                     certainly result in danger or failure in the future? Examples may include hard-coded values
-                                     assumed to change, replacing workaround code with permanent code, etc.
-                                    <span class="badge badge-warning" id="badge-risk-q2"></span>
-                                </label>
-                                <select size="2" class="form-control" id="risk-q2">
-                                    <option value="0">No</option>
-                                    <option value="1">Yes</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card mb-3">
-                        <div class="card-header">
-                            Consolidation and Retirement 
-                            <span class="badge badge-success" id="categoryConsolidate"></span>
-                        </div>
-                        <div class="card-body">
-                            <div class="form-group">
-                                <label for="consolidate-q1">
-                                    Will this result in the consolidation and/or retirement of applications and/or resources (VMs, databases, etc.)?
-                                    <span class="badge badge-warning" id="badge-consolidate-q1"></span>
-                                </label>
-                                <select size="6" class="form-control" id="consolidate-q1">
-                                    <option value="0">No</option>
-                                    <option value="1">Yes, some code</option>
-                                    <option value="2">Yes, an entire feature</option>
-                                    <option value="3">Yes, an entire area</option>
-                                    <option value="4">Yes, an entire application or resource</option>
-                                    <option value="5">Yes, multiple applications and/or resources</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="col-md-3">
-                <div class="affix">
-                    <div class="alert alert-primary h1" id="score"></div>
-                    <div class="alert alert-success h1" id="scoreRounded"></div>
-                </div>
-            </div>
-        </div>
+        <form id="calcform"></form>
     </div>
-
-    <!-- footers -->
-    <footer class="mb-5">
-        <div class="container">
-            <hr>
-            <div class="row">
-                <div class="col-md-6 col-12">
-                    <div class="h5">
-                        Designed by <a href="http://www.firstbornrogers.com/">Jordan Rogers</a>
-                    </div>
-                </div>
-                <div class="col-md-6 col-12 text-md-right text-sm-left">
-                    <div class="h5">
-                        v1.0.0-dev
-                    </div>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <!-- js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 </body>
 </html>
