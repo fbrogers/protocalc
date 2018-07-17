@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Business Value Calculator</title>
+    <title>Protocalc</title>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" crossorigin="anonymous">
     <link rel="stylesheet" href="https://assets.sdes.ucf.edu/cdn/minerva/v1.0.0-beta/css/minerva.css" />
@@ -15,76 +15,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <script src="assets/data.js"></script>
-    <script>
-        $(function(){
-            var json = data;
-            var jsonHtml = "";
-            $.each(json.categories, function(ckey, category){
-                jsonHtml += '<div class="card mb-3">';
-                jsonHtml += '<div class="card-header"><b>'+ category.name + "</b> ";
-                jsonHtml += '<span class="badge badge-success">' + category.weight + '</span>';
-                jsonHtml += '</div>';
-                jsonHtml += '<div class="card-body">';
-
-                $.each(category.questions, function(qkey, question){
-                    var questionWeight = Math.round(category.weight * (question.weight / 100));
-
-                    jsonHtml += '<div class="form-group">';
-                    jsonHtml += '<label>' + question.text + ' ';
-                    jsonHtml += '<span class="qweight badge badge-warning">' + questionWeight + '</span> ';
-                    jsonHtml += '<span class="qscore badge badge-success"></span>';
-                    jsonHtml += '</label>';
-
-                    $.each(question.answers, function(akey, answer){
-                        jsonHtml += '<div class="radio"><label>';
-                        jsonHtml += '<input type="radio" name="q'+ckey+qkey+'" value="' + akey + '"> ' + answer.text + ' ';
-                        jsonHtml += '</label></div>';
-                    });
-
-                    jsonHtml += '</div>';
-                });
-
-                jsonHtml += '</div>';
-                jsonHtml += '</div>';
-            });
-            $("#calcform").html(jsonHtml);
-
-            function calcScore(){
-                var score = 0;
-                $(".qscore").each(function(){
-                    score += Math.round($(this).text());
-                });
-                scoreRounded = Math.round(score * 0.2)
-
-                $("#score").html(score);
-                $("#scoreRounded").html(scoreRounded);
-            }
-
-            function reset(){
-                $("option:selected").prop("selected", false);
-                $(".qscore").html("0");
-                calcScore();
-                jQuery('html,body').animate({scrollTop:0}, 500);
-            }
-            reset();
-
-            $('.btn-reset').on("click", function(){
-                reset();
-            });
-
-            $("#calcform input").on("change", function(){
-                var inputParent = $(this).parent().parent().parent();
-                var questionScoreContainer = inputParent.find("span.qscore:first");
-                var questionScoreWeight = inputParent.find("span.qweight:first").html();
-                var questionScore = $(this).val();
-                var questionScale = inputParent.children().children("label").length - 1;
-                var questionScoreCalc = Math.round(questionScoreWeight * (questionScore / questionScale));
-                questionScoreContainer.html(questionScoreCalc);
-
-                calcScore();
-            });
-        })
-    </script>
+    <script src="assets/script.js"></script>
 </head>
 <body>
     <a href="#content" class="sr-only sr-only-focusable">Skip to Main Content</a>
