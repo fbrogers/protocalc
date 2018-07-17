@@ -56,14 +56,15 @@
                 });
                 scoreRounded = Math.round(score * 0.2)
 
-                $("#score").html(score + " / 100");
-                $("#scoreRounded").html(scoreRounded + " / 20");
+                $("#score").html(score);
+                $("#scoreRounded").html(scoreRounded);
             }
 
             function reset(){
                 $("option:selected").prop("selected", false);
                 $(".qscore").html("0");
                 calcScore();
+                jQuery('html,body').animate({scrollTop:0}, 500);
             }
             reset();
 
