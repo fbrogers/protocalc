@@ -43,7 +43,7 @@ $(function(){
     }
 
     function reset(){
-        $("option:selected").prop("selected", false);
+        $("input:checked").prop("checked", false);
         $(".qscore").html("0");
         calcScore();
         jQuery('html,body').animate({scrollTop:0}, 500);
