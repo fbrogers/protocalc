@@ -9,7 +9,7 @@ $(function(){
         jsonHtml += '<div class="card-body">';
 
         $.each(category.questions, function(qkey, question){
-            var questionWeight = Math.round(category.weight * (question.weight / 100));
+            var questionWeight = Number(Math.round(category.weight * (question.weight / 100) * 100) / 100).toFixed(2);
 
             jsonHtml += '<div class="form-group">';
             jsonHtml += '<label>' + question.text + ' ';
@@ -34,9 +34,10 @@ $(function(){
     function calcScore(){
         var score = 0;
         $(".qscore").each(function(){
-            score += Math.round($(this).text());
+            score += Number(Math.round($(this).text() * 100) / 100);
         });
-        scoreRounded = Math.round(score * 0.2)
+        score = Math.round(score);
+        scoreRounded = Math.ceil(score * 0.05)
 
         $("#score").html(score);
         $("#scoreRounded").html(scoreRounded);
@@ -60,7 +61,7 @@ $(function(){
         var questionScoreWeight = inputParent.find("span.qweight:first").html();
         var questionScore = $(this).val();
         var questionScale = inputParent.children().children("label").length - 1;
-        var questionScoreCalc = Math.round(questionScoreWeight * (questionScore / questionScale));
+        var questionScoreCalc = Number(Math.round(questionScoreWeight * (questionScore / questionScale) * 100) / 100).toFixed(2);
         questionScoreContainer.html(questionScoreCalc);
 
         calcScore();
